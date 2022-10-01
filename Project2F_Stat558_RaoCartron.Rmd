@@ -1,0 +1,12 @@
+---
+title: "Project 2 F Stat 558"
+author: "Cartron and Rao"
+date: "9/30/2022"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#
