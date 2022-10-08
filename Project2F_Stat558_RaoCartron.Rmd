@@ -5,8 +5,20 @@ date: "9/30/2022"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
-#
+
+
+```{r}
+library(httr)
+mydata<-GET("https://api.spoonacular.com/recipes/complexSearch?query=pasta&maxFat=25&number=2&apiKey=55fcdcfd9f374fa3adb1246f5c30c78b")
+library(dplyr)
+library(jsonlite)
+parsed <- fromJSON(rawToChar(mydata$content))
+str(parsed, max.level = 1)
+parsed$results %>%
+  colnames()
+
+parsed$results$title[2] 
+```
+ 
+ 
