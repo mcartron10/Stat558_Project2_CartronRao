@@ -48,7 +48,7 @@ df_recipe
 ```
 
 ```{r}
-get_recipe(e565b5df568f4b3fa1f5a044377e989a, 1000, 200)
+#get_recipe(e565b5df568f4b3fa1f5a044377e989a, 1000, 200)
 ```
 
 
