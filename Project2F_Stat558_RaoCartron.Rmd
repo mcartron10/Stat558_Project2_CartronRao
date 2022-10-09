@@ -6,7 +6,7 @@ output: github_document
 ---
 
 
-API code sample structure
+##API code sample structure
 
 ```{r}
 library(httr)
