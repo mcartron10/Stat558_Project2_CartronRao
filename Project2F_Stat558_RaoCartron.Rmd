@@ -26,21 +26,21 @@ Now let's create custom functions to call in data from the API.
 ```{r}
 get_recipe <- function(key, query, maxCarbs, minCarbs) {
 
-param_list <- list(apiKey = key, query = NULL, maxCarbs = maxCarbs, minCarbs = minCarbs) 
-  
+param_list <- list(apiKey = key, query = NULL, maxCarbs = maxCarbs, minCarbs = minCarbs)
+
 base_url <- "https://api.spoonacular.com/recipes/complexSearch"
 recipe_dat <- GET(paste(base_url), query = param_list)
 
 parsed <- fromJSON(rawToChar(recipe_dat$content), flatten = TRUE)
 
 return(parsed)
-  
+#   
 }
   
 
 #Below was what inspired the function above. Still some issues to work out. 
 recipes <- GET("https://api.spoonacular.com/recipes/complexSearch?apiKey=e565b5df568f4b3fa1f5a044377e989a")
-df_recipe_initial <- jsonlite::fromJSON(rawToChar(recipe_nutrition$content), flatten = TRUE)
+df_recipe_initial <- jsonlite::fromJSON(rawToChar(recipes$content), flatten = TRUE)
 
 df_recipe <- df_recipe_initial$results
 df_recipe

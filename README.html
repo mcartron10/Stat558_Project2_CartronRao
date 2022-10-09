@@ -587,12 +587,12 @@ code .in { color: #008080; }
 </style>
 <style>
 body {
-box-sizing: border-box;
-min-width: 200px;
-max-width: 980px;
-margin: 0 auto;
-padding: 45px;
-padding-top: 0px;
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 45px;
+  padding-top: 0px;
 }
 </style>
 
@@ -603,7 +603,7 @@ padding-top: 0px;
 
 <h1 id="project-2-f-stat-558">Project 2 F Stat 558</h1>
 <p>Cartron and Rao 9/30/2022</p>
-<p>API code sample structure</p>
+<p>##API code sample structure</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>mydata<span class="ot">&lt;-</span><span class="fu">GET</span>(<span class="st">&quot;https://api.spoonacular.com/recipes/complexSearch?query=pasta&amp;maxFat=25&amp;number=2&amp;apiKey=55fcdcfd9f374fa3adb1246f5c30c78b&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
@@ -617,41 +617,64 @@ padding-top: 0px;
 ##  $ totalResults: int 127</code></pre>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>parsed<span class="sc">$</span>results <span class="sc">%&gt;%</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>()</span></code></pre></div>
-<pre><code>## [1] &quot;id&quot;        &quot;title&quot;     &quot;image&quot;     &quot;imageType&quot; &quot;nutrition&quot;</code></pre>
+<pre><code>## [1] &quot;id&quot;        &quot;title&quot;     &quot;image&quot;     &quot;imageType&quot;
+## [5] &quot;nutrition&quot;</code></pre>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>parsed<span class="sc">$</span>results<span class="sc">$</span>title[<span class="dv">2</span>] </span></code></pre></div>
 <pre><code>## [1] &quot;Pasta and Seafood&quot;</code></pre>
 <p>Now let’s create custom functions to call in data from the API.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>get_recipe <span class="ot">&lt;-</span> <span class="cf">function</span>(key, query, maxCarbs, minCarbs) {</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>param_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">apiKey =</span> key, <span class="at">query =</span> <span class="cn">NULL</span>, <span class="at">maxCarbs =</span> maxCarbs, <span class="at">minCarbs =</span> minCarbs) </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>param_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">apiKey =</span> key, <span class="at">query =</span> <span class="cn">NULL</span>, <span class="at">maxCarbs =</span> maxCarbs, <span class="at">minCarbs =</span> minCarbs)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>base_url <span class="ot">&lt;-</span> <span class="st">&quot;https://api.spoonacular.com/recipes/complexSearch&quot;</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>recipe_dat <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="fu">paste</span>(base_url), <span class="at">query =</span> param_list)</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(recipe_dat<span class="sc">$</span>content), <span class="at">flatten =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(parsed)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   </span></span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#Below was what inspired the function above. Still some issues to work out. </span></span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>recipes <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="st">&quot;https://api.spoonacular.com/recipes/complexSearch?apiKey=e565b5df568f4b3fa1f5a044377e989a&quot;</span>)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>df_recipe_initial <span class="ot">&lt;-</span> jsonlite<span class="sc">::</span><span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(recipe_nutrition<span class="sc">$</span>content), <span class="at">flatten =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>df_recipe_initial <span class="ot">&lt;-</span> jsonlite<span class="sc">::</span><span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(recipes<span class="sc">$</span>content), <span class="at">flatten =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>df_recipe <span class="ot">&lt;-</span> df_recipe_initial<span class="sc">$</span>results</span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>df_recipe</span></code></pre></div>
-<pre><code>##        id                                             title                                                   image
-## 1  716426 Cauliflower, Brown Rice, and Vegetable Fried Rice https://spoonacular.com/recipeImages/716426-312x231.jpg
-## 2  715594            Homemade Garlic and Basil French Fries https://spoonacular.com/recipeImages/715594-312x231.jpg
-## 3  715497                   Berry Banana Breakfast Smoothie https://spoonacular.com/recipeImages/715497-312x231.jpg
-## 4  644387                                     Garlicky Kale https://spoonacular.com/recipeImages/644387-312x231.jpg
-## 5  716268                       African Chicken Peanut Stew https://spoonacular.com/recipeImages/716268-312x231.jpg
-## 6  716381                               Nigerian Snail Stew https://spoonacular.com/recipeImages/716381-312x231.jpg
-## 7  782601                         Red Kidney Bean Jambalaya https://spoonacular.com/recipeImages/782601-312x231.jpg
-## 8  794349                  Broccoli and Chickpea Rice Salad https://spoonacular.com/recipeImages/794349-312x231.jpg
-## 9  715446                             Slow Cooker Beef Stew https://spoonacular.com/recipeImages/715446-312x231.jpg
-## 10 715415          Red Lentil Soup with Chicken and Turnips https://spoonacular.com/recipeImages/715415-312x231.jpg
+<pre><code>##        id
+## 1  716426
+## 2  715594
+## 3  715497
+## 4  644387
+## 5  716268
+## 6  716381
+## 7  782601
+## 8  794349
+## 9  715446
+## 10 715415
+##                                                title
+## 1  Cauliflower, Brown Rice, and Vegetable Fried Rice
+## 2             Homemade Garlic and Basil French Fries
+## 3                    Berry Banana Breakfast Smoothie
+## 4                                      Garlicky Kale
+## 5                        African Chicken Peanut Stew
+## 6                                Nigerian Snail Stew
+## 7                          Red Kidney Bean Jambalaya
+## 8                   Broccoli and Chickpea Rice Salad
+## 9                              Slow Cooker Beef Stew
+## 10          Red Lentil Soup with Chicken and Turnips
+##                                                      image
+## 1  https://spoonacular.com/recipeImages/716426-312x231.jpg
+## 2  https://spoonacular.com/recipeImages/715594-312x231.jpg
+## 3  https://spoonacular.com/recipeImages/715497-312x231.jpg
+## 4  https://spoonacular.com/recipeImages/644387-312x231.jpg
+## 5  https://spoonacular.com/recipeImages/716268-312x231.jpg
+## 6  https://spoonacular.com/recipeImages/716381-312x231.jpg
+## 7  https://spoonacular.com/recipeImages/782601-312x231.jpg
+## 8  https://spoonacular.com/recipeImages/794349-312x231.jpg
+## 9  https://spoonacular.com/recipeImages/715446-312x231.jpg
+## 10 https://spoonacular.com/recipeImages/715415-312x231.jpg
 ##    imageType
 ## 1        jpg
 ## 2        jpg
