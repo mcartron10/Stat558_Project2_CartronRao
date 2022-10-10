@@ -6,49 +6,137 @@ output: github_document
 ---
 
 
-##API code sample structure
-
+## Requirements
+To get started, install and load the packages listed above:
 ```{r}
 library(httr)
-mydata<-GET("https://api.spoonacular.com/recipes/complexSearch?query=pasta&maxFat=25&number=2&apiKey=55fcdcfd9f374fa3adb1246f5c30c78b")
-library(dplyr)
 library(jsonlite)
-parsed <- fromJSON(rawToChar(mydata$content))
-str(parsed, max.level = 1)
-parsed$results %>%
-  colnames()
-
-parsed$results$title[2] 
+library(tidyverse)
+library(ggplot2)
 ```
- 
-Now let's create custom functions to call in data from the API.
-
+## Functions to Interact With the API
 ```{r}
-get_recipe <- function(key, query, maxCarbs, minCarbs) {
-
-param_list <- list(apiKey = key, query = NULL, maxCarbs = maxCarbs, minCarbs = minCarbs)
-
-base_url <- "https://api.spoonacular.com/recipes/complexSearch"
-recipe_dat <- GET(paste(base_url), query = param_list)
-
-parsed <- fromJSON(rawToChar(recipe_dat$content), flatten = TRUE)
-
-return(parsed)
-#   
+grecipe <- function(key = NULL,query = NULL,cuisine = NULL,diet = NULL,exclude = NULL,intolerance = NULL,number = 10, instruction = NULL, maxReadyTime = NULL, minCalories = NULL,maxCalories = NULL,minCarbs = NULL,maxCarbs = NULL,minProtein = NULL, maxProtein = NULL, minFat = NULL, maxFat = NULL,minAlcohol = NULL, maxAlcohol = NULL, minCaffeine = NULL, maxCaffeine = NULL, minSaturatedFat = NULL, maxSaturatedFat = NULL) {
+  if (is.null(key)) {
+    return("please enter your API key.")
+  }
+  qpar <- list(apiKey = key, query = query, cuisine = cuisine, diet = diet, excludeIngredients = exclude, number = number, instructionsRequired = instruction, maxReadyTime = maxReadyTime, minCalories = minCalories,maxCalories = maxCalories,minCarbs = minCarbs,maxCarbs = maxCarbs,minProtein = minProtein, maxProtein = maxProtein, minFat = minFat, maxFat = maxFat,minAlcohol = minAlcohol,maxAlcohol = maxAlcohol,minCaffeine = minCaffeine, maxCaffeine = maxCaffeine, minSaturatedFat = minSaturatedFat, maxSaturatedFat = maxSaturatedFat)
+  base_url <- "https://api.spoonacular.com/recipes/complexSearch"
+  data <- GET(paste(base_url), query = qpar)
+  if (http_status(data)$category != "Success") {
+    return(http_status(data))
+  } else {
+    df <- fromJSON(httr::content(data, as = "text"), flatten = TRUE)[[1]]
+    if (is.data.frame(df) == FALSE) {
+      return("No results found. Please enter new parameters.")
+    } else {
+      df <- df %>% select(recipe_id = id, recipe_name = title)
+      return(df)
+    }
+  }
 }
-  
 
-#Below was what inspired the function above. Still some issues to work out. 
-recipes <- GET("https://api.spoonacular.com/recipes/complexSearch?apiKey=e565b5df568f4b3fa1f5a044377e989a")
-df_recipe_initial <- jsonlite::fromJSON(rawToChar(recipes$content), flatten = TRUE)
+grecipe <- function(key = NULL,query = NULL,cuisine = NULL,diet = NULL,exclude = NULL,intolerance = NULL,number = 10, instruction = NULL, maxReadyTime = NULL, minCalories = NULL,maxCalories = NULL,minCarbs = NULL,maxCarbs = NULL,minProtein = NULL, maxProtein = NULL, minFat = NULL, maxFat = NULL,minAlcohol = NULL, maxAlcohol = NULL, minCaffeine = NULL, maxCaffeine = NULL, minSaturatedFat = NULL, maxSaturatedFat = NULL) {
+  if (is.null(key)) {
+    return("please enter your API key.")
+  }
+  qpar <- list(apiKey = key, query = query, cuisine = cuisine, diet = diet, excludeIngredients = exclude, number = number, instructionsRequired = instruction, maxReadyTime = maxReadyTime, minCalories = minCalories,maxCalories = maxCalories,minCarbs = minCarbs,maxCarbs = maxCarbs,minProtein = minProtein, maxProtein = maxProtein, minFat = minFat, maxFat = maxFat,minAlcohol = minAlcohol,maxAlcohol = maxAlcohol,minCaffeine = minCaffeine, maxCaffeine = maxCaffeine, minSaturatedFat = minSaturatedFat, maxSaturatedFat = maxSaturatedFat)
+  base_url <- "https://api.spoonacular.com/recipes/complexSearch"
+  data <- GET(paste(base_url), query = qpar)
+  if (http_status(data)$category != "Success") {
+    return(http_status(data))
+  } else {
+    df <- fromJSON(content(data, as = "text"), flatten = TRUE)[[1]]
+    if (is.data.frame(df) == FALSE) {
+      return("No results found. Please enter new parameters.")
+    } else {
+      df <- df %>% select(recipe_id = id, recipe_name = title)
+      return(df)
+    }
+  }
+}
 
-df_recipe <- df_recipe_initial$results
-df_recipe
-
+get_recipe_nutrition <- function(key ="5ec2cefaa0e4b3e91fc25da52f6c641",recipe_id = NULL) {
+  if (is.null(key) | is.null(recipe_id)) {
+    return("API key or recipe_id is missing.")
+  }
+  querypar_nutr <- list("apiKey" = key)
+  nutr_data <- GET(paste("https://api.spoonacular.com/recipes/",recipe_id,"/nutritionWidget.json",sep = ""), query = querypar_nutr)
+  if (http_status(nutr_data)$category != "Success") {
+    return(http_status(nutr_data))
+  } else {
+    nutr_list <- fromJSON(content(nutr_data,as = "text"), flatten = TRUE)
+    if (is.null(nutr_list)) {
+      return("No results found. Please enter new parameters.")
+    } else {
+      general_nutrition_info <- as.data.frame(nutr_list[1:4])
+      return(general_nutrition_info)
+    }
+  }
+}
 ```
-
+## Data preparation
 ```{r}
-#get_recipe(e565b5df568f4b3fa1f5a044377e989a, 1000, 200)
+mydata<-grecipe(key="e565b5df568f4b3fa1f5a044377e989a",cuisine="italian",number=10)
+
+for (i in 1:nrow(mydata))
+{
+  if (i==1)
+  {
+    maintab<- get_recipe_nutrition(key = "e565b5df568f4b3fa1f5a044377e989a", recipe_id = mydata$recipe_id[i]) 
+  }
+  else
+  {
+    a=paste0("maintab",i)
+    a<- get_recipe_nutrition(key = "e565b5df568f4b3fa1f5a044377e989a", recipe_id = mydata$recipe_id[i]) 
+    maintab<-rbind(maintab,a)
+  }
+}
+anl<-cbind(mydata,maintab)
+for (i in 1:nrow(anl))
+{
+  anl$calories[i] = gsub("k","",anl$calories[i]) 
+  anl$protein[i] = gsub("g","",anl$protein[i])
+  anl$carbs[i] = gsub("g","",anl$carbs[i])
+  anl$fat[i] = gsub("g","",anl$fat[i])
+}
+anl$calories = as.integer(anl$calories)
+anl$protein= as.integer(anl$protein)
+anl$carbs= as.integer(anl$carbs)
+anl$fat= as.integer(anl$fat)
+
+anl <- anl %>%  mutate(protcat = if_else(protein >= 25, "High pro",if_else(protein>= 15, "Medium pro","Low pro")))
+anl <- anl %>% group_by(protcat) %>% mutate(avgprot = mean(protein))
+anl <- anl %>%  mutate(fatcat = if_else(fat >= 25, "High fat",if_else(fat>= 15, "Medium fat","Low fat")))
+anl <- anl %>% group_by(fatcat) %>% mutate(avgfat = mean(fat))
+
 ```
 
+## Creation of contingency tables
+```{r}
+contab<- table(anl$protcat)
+contab1<-table(anl$protcat,anl$fatcat)
+```
 
+## Creation of 5 graphs
+```{r}
+g<- ggplot(anl,aes(x=protcat))
+g + geom_bar()
+
+#scatter_plot
+g <- ggplot(anl, aes(x = calories, y = protein))
+g + geom_point()+  geom_jitter( position=position_jitter())
+
+
+
+g<- ggplot(anl,aes(x=calories))
+g+geom_histogram()
+
+g<- ggplot(anl,aes(x=protein))
+g+geom_histogram()
+
+
+g <- ggplot(anl, aes(x = protcat, y = protein))
+g + geom_boxplot()
+
+```
