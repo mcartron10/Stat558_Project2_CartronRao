@@ -56,39 +56,41 @@ grecipe <- function(key = NULL,query = NULL,cuisine = NULL,diet = NULL,exclude =
   }
 }
 
-get_recipe_nutrition <- function(key ="5ec2cefaa0e4b3e91fc25da52f6c641",recipe_id = NULL) {
+grecipe_nut <- function(key =NULL,recipe_id = NULL) {
   if (is.null(key) | is.null(recipe_id)) {
     return("API key or recipe_id is missing.")
   }
-  querypar_nutr <- list("apiKey" = key)
-  nutr_data <- GET(paste("https://api.spoonacular.com/recipes/",recipe_id,"/nutritionWidget.json",sep = ""), query = querypar_nutr)
-  if (http_status(nutr_data)$category != "Success") {
-    return(http_status(nutr_data))
+  qpar_nut <- list("apiKey" = key)
+  ndata <- GET(paste("https://api.spoonacular.com/recipes/",recipe_id,"/nutritionWidget.json",sep = ""), query = qpar_nut)
+  if (http_status(ndata)$category != "Success") {
+    return(http_status(ndata))
   } else {
-    nutr_list <- fromJSON(content(nutr_data,as = "text"), flatten = TRUE)
-    if (is.null(nutr_list)) {
+    nlist <- fromJSON(content(ndata,as = "text"), flatten = TRUE)
+    if (is.null(nlist)) {
       return("No results found. Please enter new parameters.")
     } else {
-      general_nutrition_info <- as.data.frame(nutr_list[1:4])
-      return(general_nutrition_info)
+      nut_info <- as.data.frame(nlist[1:4])
+      return(nut_info)
     }
   }
 }
+
 ```
 ## Data preparation
 ```{r}
 mydata<-grecipe(key="e565b5df568f4b3fa1f5a044377e989a",cuisine="italian",number=10)
 
+
 for (i in 1:nrow(mydata))
 {
   if (i==1)
   {
-    maintab<- get_recipe_nutrition(key = "e565b5df568f4b3fa1f5a044377e989a", recipe_id = mydata$recipe_id[i]) 
+    maintab<- grecipe_nut(key = "e565b5df568f4b3fa1f5a044377e989a", recipe_id = mydata$recipe_id[i]) 
   }
   else
   {
     a=paste0("maintab",i)
-    a<- get_recipe_nutrition(key = "e565b5df568f4b3fa1f5a044377e989a", recipe_id = mydata$recipe_id[i]) 
+    a<- grecipe_nut(key = "e565b5df568f4b3fa1f5a044377e989a", recipe_id = mydata$recipe_id[i]) 
     maintab<-rbind(maintab,a)
   }
 }
