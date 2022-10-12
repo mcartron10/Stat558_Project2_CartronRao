@@ -23,6 +23,10 @@ Cartron and Rao
 -   <a href="#further-possibel-analyses"
     id="toc-further-possibel-analyses">Further Possibel Analyses</a>
 
+``` r
+knitr:: opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
 # Requirements
 
 Required Packages:
@@ -33,21 +37,8 @@ following packages were required:
 ``` r
 library(httr)
 library(jsonlite)
-library(tidyverse)
-```
-
-    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-    ## ✔ tibble  3.1.8     ✔ dplyr   1.0.9
-    ## ✔ tidyr   1.2.0     ✔ stringr 1.4.1
-    ## ✔ readr   2.1.2     ✔ forcats 0.5.2
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter()  masks stats::filter()
-    ## ✖ purrr::flatten() masks jsonlite::flatten()
-    ## ✖ dplyr::lag()     masks stats::lag()
-
-``` r
 library(ggplot2)
+library(tidyverse)
 ```
 
 # Functions to Interact With the API and Process Data
@@ -102,11 +93,11 @@ returned. The end result is a data frame with the nutritional
 information for a given recipe (calories, carbs, fat, and protein).
 
 ``` r
-recipe_query_nutrition <- function(key =NULL, recipe_id = NULL) {
+recipe_query_nutrition <- function(key = NULL, recipe_id = NULL) {
   
 qpar_nut <- list("apiKey" = key)
 
-ndata <- GET(paste("https://api.spoonacular.com/recipes/", recipe_id, "/nutritionWidget.json",sep = ""), query = qpar_nut)
+ndata <- GET(paste("https://api.spoonacular.com/recipes/", recipe_id, "/nutritionWidget.json", sep = ""), query = qpar_nut)
     
 nlist <- fromJSON(content(ndata,as = "text"), flatten = TRUE)
       
@@ -161,12 +152,12 @@ mydata <- recipe_query(key = key, ...)
 {
   if (i==1)
   {
-    maintab <- recipe_query_nutrition(key = key, recipe_id = mydata$recipe_id[i]) 
+    maintab <- recipe_query_nutrition("key" = key, recipe_id = mydata$recipe_id[i]) 
   }
   else
   {
     a = paste0("maintab", i)
-    a <- recipe_query_nutrition(key = key, recipe_id = mydata$recipe_id[i]) 
+    a <- recipe_query_nutrition("key" = key, recipe_id = mydata$recipe_id[i]) 
     maintab <- rbind(maintab, a)
   }
   }
@@ -203,10 +194,8 @@ required personal API key, Italian cuisine, and a sample size of 100 (n
 = 100).
 
 ``` r
-anl <- combine_recipe_dfs("e565b5df568f4b3fa1f5a044377e989a", cuisine = "italian", number = 10)
+anl <- combine_recipe_dfs(key = "e565b5df568f4b3fa1f5a044377e989a", cuisine = "italian", number = 10)
 ```
-
-    ## No encoding supplied: defaulting to UTF-8.
 
 Displayed above is the resulting combined data frame of our combined
 data frames.
@@ -281,7 +270,7 @@ g <- ggplot(anl, aes(x = protcat))
 g + geom_bar()
 ```
 
-![](Project2F_Stat558_RaoCartron_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](Project2F_Stat558_RaoCartron_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 ### Scatter Plot - Calories vs Protein
 
@@ -295,7 +284,7 @@ g <- ggplot(anl, aes(x = calories, y = protein))
 g + geom_point()+  geom_jitter( position=position_jitter())
 ```
 
-![](Project2F_Stat558_RaoCartron_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Project2F_Stat558_RaoCartron_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ### Histogram - Calories
 
@@ -306,9 +295,7 @@ g<- ggplot(anl,aes(x=calories))
 g+geom_histogram()
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-
-![](Project2F_Stat558_RaoCartron_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](Project2F_Stat558_RaoCartron_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ### Histogram - Protein
 
@@ -320,9 +307,7 @@ g<- ggplot(anl,aes(x=protein))
 g+geom_histogram()
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-
-![](Project2F_Stat558_RaoCartron_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](Project2F_Stat558_RaoCartron_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ### Boxplot - procat vs protein
 
@@ -331,7 +316,7 @@ g <- ggplot(anl, aes(x = protcat, y = protein))
 g + geom_boxplot()
 ```
 
-![](Project2F_Stat558_RaoCartron_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](Project2F_Stat558_RaoCartron_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 # Further Possibel Analyses
 
@@ -345,5 +330,3 @@ preparation times? We could even add parameters to expand the scope of
 possibilities for modeling.
 
 Thank you for exploring our vignette!
-
-    ## No encoding supplied: defaulting to UTF-8.

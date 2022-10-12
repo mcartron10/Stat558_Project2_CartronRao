@@ -90,12 +90,12 @@ mydata <- recipe_query(key = key, ...)
 {
   if (i==1)
   {
-    maintab <- recipe_query_nutrition(key = key, recipe_id = mydata$recipe_id[i]) 
+    maintab <- recipe_query_nutrition("key" = key, recipe_id = mydata$recipe_id[i]) 
   }
   else
   {
     a = paste0("maintab", i)
-    a <- recipe_query_nutrition(key = key, recipe_id = mydata$recipe_id[i]) 
+    a <- recipe_query_nutrition("key" = key, recipe_id = mydata$recipe_id[i]) 
     maintab <- rbind(maintab, a)
   }
   }
