@@ -136,7 +136,7 @@ Now let's put all the hard work above to good use! We can call the combine_recip
 
 ```{r}
   
-anl <- combine_recipe_dfs(key = "81de4f08655b4a899fbed78cda548742", cuisine = "italian", number = 60)
+anl <- combine_recipe_dfs(key = "29b68533d5db43d0955f79561b0bdddf", cuisine = "italian", number = 60)
 
 ```
 Displayed above is the resulting combined data frame of our combined data frames. 
@@ -170,7 +170,7 @@ anl$fatcat <- factor(anl$fatcat, levels = c("Low fat", "Medium fat", "High fat")
 
 ### Bar Plot - Procat 
 
-Our first plot is s box plot that looks at the number of times recipes fell into either the low, medium, or high categories of protein (each variable can only belong in one of these levels). The result is interesting. It could be that Italian recipes have more recipes in the 'high-portein' category. It could also be, however, that our thresholds for protein content are not adequately representing what truly constitutes a recipe with high protein vs medium protein or low protein. 
+Our first plot is s box plot that looks at the number of times recipes fell into either the low, medium, or high categories of protein (each variable can only belong in one of these levels). The result is interesting. It could be that Italian recipes have more recipes in the 'high-protein' category. It could also be, however, that our thresholds for protein content are not adequately representing what truly constitutes a recipe with high protein vs medium protein or low protein. 
 
 ```{R}
 
@@ -197,7 +197,7 @@ ggplot(anl, aes(x = calories, y = protein)) +
 
 ### Histogram - Calories
 
-Below is a histogram of calories across our selected recipes. The mean of the distribution is 527.96 calories. 
+Below is a histogram of calories across our selected recipes. The mean of the distribution is `mean(anl$calories)` calories. 
 
 ```{R}
 mean(anl$calories)
@@ -211,7 +211,7 @@ ggplot(anl,aes(x = calories)) +
 
 ### Histogram - Protein
 
-Below we have another histogram, this time of protein across all of our selected recipes. The median number of grams of protein per recipe is 22.5 grams. The distribution below also appears to be right-skewed.  
+Below we have another histogram, this time of protein across all of our selected recipes. The median number of grams of protein per recipe is `mean(anl$protein` grams. The distribution below also appears to be right-skewed.  
 
 ```{R}
 ggplot(anl,aes(x = protein)) + 
