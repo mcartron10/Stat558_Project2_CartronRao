@@ -36,7 +36,7 @@ Recipe_query is the first of our data processing functions. The recipe documenta
 Note: the flatten argument in fromJSON() will, if set to `TRUE`, prevent the function from returning nested data frames. 
 
 ```{R}
-recipe_query <- function(key = NULL, query = NULL, cuisine = NULL, diet = NULL, exclude = NULL, number = 10, maxReadyTime = NULL, minCalories = NULL, maxCalories = NULL,minCarbs = NULL,maxCarbs = NULL,minProtein = NULL, maxProtein = NULL, minFat = NULL, maxFat = NULL, minSaturatedFat = NULL, maxSaturatedFat = NULL) { 
+recipe_query <- function(key = NULL, query = NULL, cuisine = NULL, diet = NULL, exclude = NULL, number = 50, maxReadyTime = NULL, minCalories = NULL, maxCalories = NULL,minCarbs = NULL,maxCarbs = NULL,minProtein = NULL, maxProtein = NULL, minFat = NULL, maxFat = NULL, minSaturatedFat = NULL, maxSaturatedFat = NULL) { 
   
 qpar <- list(apiKey = key, query = query, cuisine = cuisine, diet = diet, excludeIngredients = exclude, number = number, maxReadyTime = maxReadyTime, minCalories = minCalories, maxCalories = maxCalories, minCarbs = minCarbs, maxCarbs = maxCarbs, minProtein = minProtein, maxProtein = maxProtein, minFat = minFat, maxFat = maxFat, minSaturatedFat = minSaturatedFat, maxSaturatedFat = maxSaturatedFat) 
 
