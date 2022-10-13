@@ -210,7 +210,7 @@ ggplot(anl,aes(x = calories)) +
 
 ### Histogram - Protein
 
-Below we have another histogram, this time of protein across all of our selected recipes. The median number of grams of protein per recipe is `r `mean(anl$protein)` grams. The distribution below also appears to be right-skewed.  
+Below we have another histogram, this time of protein across all of our selected recipes. The median number of grams of protein per recipe is `r mean(anl$protein)` grams. The distribution below also appears to be right-skewed.  
 
 ```{R}
 ggplot(anl,aes(x = protein)) + 
