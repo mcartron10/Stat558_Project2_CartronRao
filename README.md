@@ -10,11 +10,18 @@ Cartron and Rao
     -   [recipe_query_nutrition](#recipe_query_nutrition)
     -   [combine_recipe_dfs](#combine_recipe_dfs)
 -   [Exploratory Data Analysis](#exploratory-data-analysis)
-    -   [Creation of contingency
-        tables](#creation-of-contingency-tables)
+    -   [Creation of Contingency
+        Tables](#creation-of-contingency-tables)
     -   [Creation of Data
         Visualizations](#creation-of-data-visualizations)
--   [Further Possibel Analyses](#further-possibel-analyses)
+        -   [Bar Plot - Procat](#bar-plot---procat)
+        -   [Scatter Plot - Calories
+            vs. Protein](#scatter-plot---calories-vs-protein)
+        -   [Histogram - Calories](#histogram---calories)
+        -   [Histogram - Protein](#histogram---protein)
+        -   [Box Plot - Procat vs
+            Protein](#box-plot---procat-vs-protein)
+-   [Further Possible Analyses](#further-possible-analyses)
 
 # Requirements
 
@@ -25,29 +32,9 @@ following packages were required:
 
 ``` r
 library(httr)
-```
-
-    ## Warning: package 'httr' was built under R version 4.1.3
-
-``` r
 library(jsonlite)
-library(tidyverse)
-```
-
-    ## -- Attaching packages ------------------------------------------------------------------------------------------- tidyverse 1.3.1 --
-
-    ## v ggplot2 3.3.5     v purrr   0.3.4
-    ## v tibble  3.1.6     v dplyr   1.0.7
-    ## v tidyr   1.1.4     v stringr 1.4.0
-    ## v readr   2.1.1     v forcats 0.5.1
-
-    ## -- Conflicts ---------------------------------------------------------------------------------------------- tidyverse_conflicts() --
-    ## x dplyr::filter()  masks stats::filter()
-    ## x purrr::flatten() masks jsonlite::flatten()
-    ## x dplyr::lag()     masks stats::lag()
-
-``` r
 library(ggplot2)
+library(tidyverse)
 ```
 
 # Functions to Interact With the API and Process Data
@@ -71,7 +58,7 @@ Note: the flatten argument in fromJSON() will, if set to `TRUE`, prevent
 the function from returning nested data frames.
 
 ``` r
-recipe_query <- function(key = NULL, query = NULL, cuisine = NULL, diet = NULL, exclude = NULL, number = 10, maxReadyTime = NULL, minCalories = NULL, maxCalories = NULL,minCarbs = NULL,maxCarbs = NULL,minProtein = NULL, maxProtein = NULL, minFat = NULL, maxFat = NULL, minSaturatedFat = NULL, maxSaturatedFat = NULL) { 
+recipe_query <- function(key = NULL, query = NULL, cuisine = NULL, diet = NULL, exclude = NULL, number = 50, maxReadyTime = NULL, minCalories = NULL, maxCalories = NULL,minCarbs = NULL,maxCarbs = NULL,minProtein = NULL, maxProtein = NULL, minFat = NULL, maxFat = NULL, minSaturatedFat = NULL, maxSaturatedFat = NULL) { 
   
 qpar <- list(apiKey = key, query = query, cuisine = cuisine, diet = diet, excludeIngredients = exclude, number = number, maxReadyTime = maxReadyTime, minCalories = minCalories, maxCalories = maxCalories, minCarbs = minCarbs, maxCarbs = maxCarbs, minProtein = minProtein, maxProtein = maxProtein, minFat = minFat, maxFat = maxFat, minSaturatedFat = minSaturatedFat, maxSaturatedFat = maxSaturatedFat) 
 
@@ -81,7 +68,7 @@ base_url <- "https://api.spoonacular.com/recipes/complexSearch"
 data <- GET(paste(base_url), query = qpar)
 
 df <- fromJSON(content(data, as = "text"), flatten = TRUE)[[1]]
-df1 <- df %>% select(recipe_id = id, recipe_title = title)
+df1 <- df %>% dplyr::select(recipe_id = id, recipe_title = title)
       return(df1)
 }
 ```
@@ -154,19 +141,19 @@ We return this data frame with ‘return()’.
 ``` r
 combine_recipe_dfs <- function(key = NULL, ...) {
   
-mydata <- recipe_query(key = key, ...)  
+mydata <- recipe_query("key" = key, ...)  
 
   
   for (i in 1:nrow(mydata))
 {
   if (i==1)
   {
-    maintab <- recipe_query_nutrition(key = key, recipe_id = mydata$recipe_id[i]) 
+    maintab <- recipe_query_nutrition("key" = key, recipe_id = mydata$recipe_id[i]) 
   }
   else
   {
     a = paste0("maintab", i)
-    a <- recipe_query_nutrition(key = key, recipe_id = mydata$recipe_id[i]) 
+    a <- recipe_query_nutrition("key" = key, recipe_id = mydata$recipe_id[i]) 
     maintab <- rbind(maintab, a)
   }
   }
@@ -203,15 +190,13 @@ required personal API key, Italian cuisine, and a sample size of 100 (n
 = 100).
 
 ``` r
-anl <- combine_recipe_dfs(key = "e565b5df568f4b3fa1f5a044377e989a", cuisine = "italian", number = 10)
+anl <- combine_recipe_dfs(key = "29b68533d5db43d0955f79561b0bdddf", cuisine = "italian", number = 50)
 ```
-
-    ## No encoding supplied: defaulting to UTF-8.
 
 Displayed above is the resulting combined data frame of our combined
 data frames.
 
-## Creation of contingency tables
+## Creation of Contingency Tables
 
 Below we created three contingency tables. The first two contain the
 protein content categorical variable and fat content categorical
@@ -234,7 +219,7 @@ print(contab)
 
     ## 
     ##   High pro    Low pro Medium pro 
-    ##          4          2          4
+    ##         22          9         19
 
 ``` r
 print(contab1)
@@ -242,7 +227,7 @@ print(contab1)
 
     ## 
     ##   High fat    Low fat Medium fat 
-    ##          2          5          3
+    ##         16         21         13
 
 ``` r
 print(contab2)
@@ -250,18 +235,18 @@ print(contab2)
 
     ##             
     ##              High fat Low fat Medium fat
-    ##   High pro          1       2          1
-    ##   Low pro           0       1          1
-    ##   Medium pro        1       2          1
+    ##   High pro         10       7          5
+    ##   Low pro           1       5          3
+    ##   Medium pro        5       9          5
 
 ## Creation of Data Visualizations
 
 Below are a number of visualizations for our above data call. These are
 examples that allow us to observe and/or compare some of our variables.
 
-One preliminary step we need to take is to convert our categorical
-variables to factors. This will make our categorical variables easier to
-work with, especially as it pertains to ordering their levels in plots.
+One preliminary step we needed to take was to convert our categorical
+variables to factors. This made our categorical variables easier to work
+with, especially as it pertains to ordering their levels in plots.
 
 ``` r
 anl$protcat <- factor(anl$protcat, levels = c("Low pro", "Medium pro", "High pro"), 
@@ -270,80 +255,104 @@ anl$fatcat <- factor(anl$fatcat, levels = c("Low fat", "Medium fat", "High fat")
        labels = c("Low Fat", "Medium Fat", "High Fat"))
 ```
 
-### Bar Plot - procat
+### Bar Plot - Procat
 
-Our first plot is s boxplot that looks at the number of times recipes
+Our first plot is s box plot that looks at the number of times recipes
 fell into either the low, medium, or high categories of protein (each
-variable can only belong in one of these levels).
+variable can only belong in one of these levels). The result is
+interesting. It could be that Italian recipes have more recipes in the
+‘high-protein’ category. It could also be, however, that our thresholds
+for protein content are not adequately representing what truly
+constitutes a recipe with high protein vs medium protein or low protein.
 
 ``` r
-g <- ggplot(anl, aes(x = protcat))
-g + geom_bar()
-```
-
-![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
-
-### Scatter Plot - Calories vs Protein
-
-The scatte plot below allows us to compare protein and calories. It
-appears that recipes with more calories also, on average, have more
-protein.
-
-``` r
-#scatter_plot
-g <- ggplot(anl, aes(x = calories, y = protein))
-g + geom_point()+  geom_jitter( position=position_jitter())
+ggplot(anl, aes(x = protcat, fill = protcat)) + 
+  geom_bar() +
+  labs(x = "Protein Category", y = "Recipe Count", title = "Protein Category Bar Plot") +
+  scale_fill_brewer(palette = "Reds")
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
-### Histogram - Calories
+### Scatter Plot - Calories vs. Protein
 
-Below is a histogram of calories across our selected recipes.
+The scatter plot below allows us to compare protein and calories. It
+appears that recipes with more calories also, on average, have more
+protein. Notice the positive correlation:
 
 ``` r
-g<- ggplot(anl,aes(x=calories))
-g+geom_histogram()
+ggplot(anl, aes(x = calories, y = protein)) +
+  geom_point() +  
+  geom_jitter(position = position_jitter()) +
+  geom_smooth(method = lm) +
+  labs(x = "Calories", y = "Protein(grams)", title = "Protein vs Calories")
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-
 ![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+### Histogram - Calories
+
+Below is a histogram of calories across our selected recipes. The mean
+of the distribution is `mean(anl$calories)` calories.
+
+``` r
+mean(anl$calories)
+```
+
+    ## [1] 508.16
+
+``` r
+ggplot(anl,aes(x = calories)) + 
+  geom_histogram(binwidth = 45) +
+  labs(y = "Recipes", x = "Calories", title = "Histogram of Recipe Calories") +
+  geom_vline(aes(xintercept = mean(anl$calories)), col = 'blue', size = 1.1)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ### Histogram - Protein
 
 Below we have another histogram, this time of protein across all of our
-selected recipes.
+selected recipes. The median number of grams of protein per recipe is
+`mean(anl$protein` grams. The distribution below also appears to be
+right-skewed.
 
 ``` r
-g<- ggplot(anl,aes(x=protein))
-g+geom_histogram()
-```
-
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-
-![](README_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
-
-### Boxplot - procat vs protein
-
-``` r
-g <- ggplot(anl, aes(x = protcat, y = protein))
-g + geom_boxplot()
+ggplot(anl,aes(x = protein)) + 
+  geom_histogram(binwidth = 4) +
+  labs(y = "Recipes", x = "Protein(grams)", title = "Histogram of Recipe Protein Content") +
+  geom_vline(aes(xintercept = mean(anl$protein)), col = 'blue', size = 1.1)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
-# Further Possibel Analyses
+### Box Plot - Procat vs Protein
 
-What we have conducted thus far is the construction of a data calling
-process and pipeline that gives us useable data, as our tables and plots
+The following box plot, comparing recipe protein content with our
+protein levels, should confirm that our protein categories are
+reflective of recipes with low, median, and high protein. As expected,
+the lowest median protein belonged to the low protein category, and the
+highest protein category having the highest median amount of protein.
+The medium protein category fell between these two categories. As
+expected, there was also no overlap between categories.
+
+``` r
+ggplot(anl, aes(x = protcat, y = protein)) +
+  geom_boxplot() +
+  labs(y = "Protein(grams)", x = "Protein Categories", title = "Protein Content for Protein Categories Boxplot") 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+# Further Possible Analyses
+
+What we have conducted thus far is the construction of a data-calling
+process and pipeline that gives us usable data, as our tables and plots
 clearly demonstrate. We would be well set up to conduct further and more
-robust comparisons. This is where are additional parameters could come
+robust comparisons. This is where our additional parameters could come
 into play. For example, how does Italian cuisine compare to German or
 Thai cuisine? Do some diets lend themselves to greater cooking
 preparation times? We could even add parameters to expand the scope of
 possibilities for modeling.
 
 Thank you for exploring our vignette!
-
-    ## No encoding supplied: defaulting to UTF-8.
