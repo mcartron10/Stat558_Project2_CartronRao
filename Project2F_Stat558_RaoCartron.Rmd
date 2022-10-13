@@ -136,7 +136,7 @@ Now let's put all the hard work above to good use! We can call the combine_recip
 
 ```{r}
   
-anl <- combine_recipe_dfs(key = "29b68533d5db43d0955f79561b0bdddf", cuisine = "italian", number = 50)
+anl <- combine_recipe_dfs(key = "b43fcb6d41e541e7904ad6c9b3bf63b8", cuisine = "italian", number = 50)
 
 ```
 
@@ -196,7 +196,7 @@ ggplot(anl, aes(x = calories, y = protein)) +
 
 ### Histogram - Calories
 
-Below is a histogram of calories across our selected recipes. The mean of the distribution is `r `mean(anl$calories)` calories. 
+Below is a histogram of calories across our selected recipes. The mean of the distribution is `r mean(anl$calories)` calories. 
 
 ```{R}
 mean(anl$calories)
@@ -210,7 +210,7 @@ ggplot(anl,aes(x = calories)) +
 
 ### Histogram - Protein
 
-Below we have another histogram, this time of protein across all of our selected recipes. The median number of grams of protein per recipe is `r `mean(anl$protein` grams. The distribution below also appears to be right-skewed.  
+Below we have another histogram, this time of protein across all of our selected recipes. The median number of grams of protein per recipe is `r `mean(anl$protein)` grams. The distribution below also appears to be right-skewed.  
 
 ```{R}
 ggplot(anl,aes(x = protein)) + 

@@ -189,7 +189,7 @@ functions for parameter choices). For this exercise we will use the
 required personal API key, Italian cuisine, and a sample size of 50.
 
 ``` r
-anl <- combine_recipe_dfs(key = "29b68533d5db43d0955f79561b0bdddf", cuisine = "italian", number = 50)
+anl <- combine_recipe_dfs(key = "b43fcb6d41e541e7904ad6c9b3bf63b8", cuisine = "italian", number = 50)
 ```
 
 ## Creation of Contingency Tables
@@ -293,7 +293,7 @@ ggplot(anl, aes(x = calories, y = protein)) +
 ### Histogram - Calories
 
 Below is a histogram of calories across our selected recipes. The mean
-of the distribution is `r`mean(anl$calories)\` calories.
+of the distribution is 508.16 calories.
 
 ``` r
 mean(anl$calories)
@@ -314,7 +314,7 @@ ggplot(anl,aes(x = calories)) +
 
 Below we have another histogram, this time of protein across all of our
 selected recipes. The median number of grams of protein per recipe is
-`r`mean(anl$protein\` grams. The distribution below also appears to be
+`r`mean(anl$protein)\` grams. The distribution below also appears to be
 right-skewed.
 
 ``` r
